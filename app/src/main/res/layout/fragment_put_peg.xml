@@ -19,33 +19,29 @@
             android:background="@drawable/round_button" />
 
     </LinearLayout>
-    <ImageView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/right_arrow"
-        android:scaleY="0.5"
-        android:scaleX="0.5"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="165dp"
-        android:id="@+id/guide1"/>
+        android:layout_marginLeft="130dp"
+        android:layout_marginTop="170dp"
+        >
+
+        <ImageView
+            android:id="@+id/guide1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/right_arrow" />
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:src="@drawable/right_arrow"
-        android:scaleY="0.5"
-        android:scaleX="0.5"
-        android:layout_marginLeft="125dp"
-        android:layout_marginTop="165dp"
         android:id="@+id/guide2"/>
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:src="@drawable/right_arrow"
-        android:scaleY="0.5"
-        android:scaleX="0.5"
-        android:layout_marginTop="165dp"
-        android:layout_marginLeft="150dp"
-        android:id="@+id/guide3"/>
+       android:id="@+id/guide3"/>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

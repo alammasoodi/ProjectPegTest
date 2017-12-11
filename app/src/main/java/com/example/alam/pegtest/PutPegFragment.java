@@ -1,17 +1,20 @@
 package com.example.alam.pegtest;
 
+import android.animation.AnimatorSet;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ClipData;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.DisplayMetrics;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,9 +40,9 @@ public class PutPegFragment extends Fragment {
     private static final String Bt_TAG = " BT_DRAG";
     private static final String Hl_TAG = " HL_DRAG";
     int droppedPegs = 0;
-    Animation animFadein;
+    Animation animFadein1,animFadein2,animFadein3;
     LinearLayout draggable_layout;
-    ImageView guide1,guide2,guide3;
+    ImageView arrow1,arrow2,arrow3;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_put_peg, container, false);
@@ -50,13 +53,17 @@ public class PutPegFragment extends Fragment {
             droppedPegs = pref.getInt("droppedPegs",droppedPegs);
         dragButton = (Button)v. findViewById(R.id.drag_button);
         holeButton = (Button) v.findViewById(R.id.hole_button);
-        guide1 = (ImageView) v.findViewById(R.id.guide1);
-        guide2 = (ImageView) v.findViewById(R.id.guide2);
-        guide3 = (ImageView) v.findViewById(R.id.guide3);
-        guide1.setColorFilter(getActivity().getResources().getColor(R.color.blue_dark));
-        guide2.setColorFilter(getActivity().getResources().getColor(R.color.blue_dark));
-        guide3.setColorFilter(getActivity().getResources().getColor(R.color.blue_dark));
-        animFadein = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+        arrow1 = (ImageView) v.findViewById(R.id.guide1);
+        arrow2 = (ImageView) v.findViewById(R.id.guide2);
+        arrow3 = (ImageView) v.findViewById(R.id.guide3);
+        arrow1.setColorFilter(getActivity().getResources().getColor(R.color.blue_dark));
+        arrow2.setColorFilter(getActivity().getResources().getColor(R.color.blue_dark));
+        arrow3.setColorFilter(getActivity().getResources().getColor(R.color.blue_dark));
+        animFadein1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.blink);
+        animFadein2 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.blink);
+        animFadein3 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
                 R.anim.blink);
 //        ObjectAnimator animPic1 = ObjectAnimator.ofFloat(guide1, "alpha", 0f, 1f);
 //        ObjectAnimator animPic2 = ObjectAnimator.ofFloat(guide2, "alpha", 0f, 1f);
@@ -64,12 +71,15 @@ public class PutPegFragment extends Fragment {
 //        AnimatorSet animSet = new AnimatorSet();
 //        animSet.playSequentially(animPic1, animPic2,animPic3);
         //animSet.start();
-        guide1.startAnimation(animFadein);
-        guide2.startAnimation(animFadein);
-        guide3.startAnimation(animFadein);
+        AnimationSet animSet = new AnimationSet(false);
+        arrow1.startAnimation(animFadein1);
+        arrow2.startAnimation(animFadein2);
+        arrow3.startAnimation(animFadein3);
         //hole = (LinearLayout) findViewById(R.id.hole);
         //dragButton.setTag(Bt_TAG);
         //hole.setTag(Hl_TAG);
+
+
         draggable_layout = (LinearLayout) v.findViewById(R.id.draggable_layout);
         draggable_layout.setOnDragListener(new View.OnDragListener() {
             boolean flag = false;
@@ -182,5 +192,12 @@ public class PutPegFragment extends Fragment {
         });
 
         return v;
+    }
+    public double getScreenDistance(double x1, double y1, double x2, double y2) {
+        DisplayMetrics dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        double xDist = Math.pow(Math.abs(x1 - x2) / dm.xdpi, 2);
+        double yDist = Math.pow(Math.abs(y1 - y2) / dm.ydpi, 2);
+        return Math.sqrt(xDist + yDist);
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
@@ -18,10 +18,42 @@
             android:layout_height="80dp"
             android:background="@drawable/round_button" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="130dp"
+        android:layout_marginTop="170dp"
+
+        >
+
+        <ImageView
+            android:id="@+id/guide1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:src="@drawable/right_arrow" />
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/right_arrow"
+            android:scaleY="0.5"
+            android:scaleX="0.5"
+            android:id="@+id/guide2"/>
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/right_arrow"
+            android:scaleY="0.5"
+            android:scaleX="0.5"
+            android:id="@+id/guide3"/>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="100dp"
         android:layout_height="400dp"
         android:layout_marginTop="60dp"
+        android:layout_marginLeft="300dp"
         android:id="@+id/draggable_layout">
 
 
@@ -32,4 +64,4 @@
             />
         </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

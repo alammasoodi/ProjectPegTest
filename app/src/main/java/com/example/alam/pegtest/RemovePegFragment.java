@@ -3,13 +3,19 @@ package com.example.alam.pegtest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ClipData;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,14 +33,44 @@ public class RemovePegFragment extends Fragment {
     LinearLayout.LayoutParams lParams;
     private static final String Bt_TAG = " BT_DRAG";
     private static final String Hl_TAG = " HL_DRAG";
-    int droppedPegs = 0;
+    int pegsRemoved = 0;
     LinearLayout draggable_layout;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+    ImageView arrow1,arrow2,arrow3;
+    Animation animFadein1,animFadein2,animFadein3;
+    boolean isFlag;
+    CountDownTimer mCountDownTimer;
+
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_remove_peg, container, false);
+        pref = getActivity().getApplication().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        editor = pref.edit();
+        if(isFlag)
+            pegsRemoved = pref.getInt("pegsRemoved",pegsRemoved);
+
         dragButton = (Button)v. findViewById(R.id.drag_button);
         holeButton = (Button) v.findViewById(R.id.hole_button);
+        arrow1 = (ImageView) v.findViewById(R.id.guide1);
+        arrow2 = (ImageView) v.findViewById(R.id.guide2);
+        arrow3 = (ImageView) v.findViewById(R.id.guide3);
+        arrow1.setColorFilter(getActivity().getResources().getColor(R.color.blue_dark));
+        arrow2.setColorFilter(getActivity().getResources().getColor(R.color.blue_dark));
+        arrow3.setColorFilter(getActivity().getResources().getColor(R.color.blue_dark));
+        animFadein1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.blink);
+        animFadein2 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.blink);
+        animFadein3 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.blink);
+        arrow1.startAnimation(animFadein1);
+        arrow2.startAnimation(animFadein2);
+        arrow3.startAnimation(animFadein3);
+
         //hole = (LinearLayout) findViewById(R.id.hole);
         //dragButton.setTag(Bt_TAG);
         //hole.setTag(Hl_TAG);
@@ -59,17 +95,58 @@ public class RemovePegFragment extends Fragment {
 
                     case DragEvent.ACTION_DROP: {
                         success = success +1;
+                        pegsRemoved = pegsRemoved + 1;
+                        editor.putInt("pegsRemoved",pegsRemoved);
+                        editor.putBoolean("flag", true);
+                        editor.commit();
+                        success = success +1;
                         flag = true;
                         return (true);
                     }
 
                     case DragEvent.ACTION_DRAG_ENDED: {
-                        droppedPegs = droppedPegs + 1;
+
+                        pegsRemoved = pegsRemoved + 1;
                         final FragmentManager fragmentManager = getFragmentManager();
                         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        if (pegsRemoved < 2) {
+                            if (flag) {
+                                mCountDownTimer = new CountDownTimer(500, 1000) {
 
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
+
+                                    }
+
+                                    @Override
+                                    public void onFinish() {
+                                        fragmentManager.beginTransaction().replace(R.id.frame_layout, new RemovePegFragment()).commit();
+
+                                    }
+                                };
+                                Toast.makeText(getActivity(), "success", Toast.LENGTH_SHORT).show();
+                                mCountDownTimer.start();
+
+                            } else {
+                                fragmentManager.beginTransaction().replace(R.id.frame_layout, new RemovePegFragment()).commit();
+
+                                Toast.makeText(getActivity(), "try again", Toast.LENGTH_SHORT).show();
+
+                            }
+
+                            //text.setText("Total Drops: " + total);
+
+
+                        }
+                        else {
+                            editor.putBoolean("flag", false);
+                            editor.putInt("pegsRemoved",0);
+                            Intent intent = new Intent(getActivity(),ResultActivity.class);
+                            startActivity(intent);
+                        }
                     }
-
+                    editor.commit();
+                    return (true);
                     default:
                         break;
 
