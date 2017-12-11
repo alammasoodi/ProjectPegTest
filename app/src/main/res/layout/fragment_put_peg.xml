@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    >
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingTop="150dp"
+        android:paddingLeft="20dp"
+        android:id="@+id/draggable_layout2">
+
+        <Button
+            android:id="@+id/drag_button"
+            android:layout_width="83dp"
+            android:layout_height="80dp"
+            android:background="@drawable/round_button" />
+
+    </LinearLayout>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/right_arrow"
+        android:scaleY="0.5"
+        android:scaleX="0.5"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="165dp"
+        android:id="@+id/guide1"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/right_arrow"
+        android:scaleY="0.5"
+        android:scaleX="0.5"
+        android:layout_marginLeft="125dp"
+        android:layout_marginTop="165dp"
+        android:id="@+id/guide2"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/right_arrow"
+        android:scaleY="0.5"
+        android:scaleX="0.5"
+        android:layout_marginTop="165dp"
+        android:layout_marginLeft="150dp"
+        android:id="@+id/guide3"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="150dp"
+        android:layout_marginLeft="270dp"
+        android:id="@+id/draggable_layout">
+
+        <Button
+            android:id="@+id/hole_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/round_button_hole" />
+    </LinearLayout>
+
+</RelativeLayout>
