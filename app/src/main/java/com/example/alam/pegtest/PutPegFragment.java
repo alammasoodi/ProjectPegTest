@@ -1,9 +1,12 @@
 package com.example.alam.pegtest;
 
 import android.animation.AnimatorSet;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ClipData;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -39,6 +42,10 @@ public class PutPegFragment extends Fragment {
     boolean isFlag;
     int total,failure,success;
     TextView text;
+    boolean firstDrop = false;
+    long initialDropTime = 0;
+    long lastDropTime = 0;
+    long timeTaken;
     LinearLayout.LayoutParams lParams;
     private static final String Bt_TAG = " BT_DRAG";
     private static final String Hl_TAG = " HL_DRAG";
@@ -117,6 +124,11 @@ public class PutPegFragment extends Fragment {
                     }
 
                     case DragEvent.ACTION_DRAG_ENDED: {
+                        if (!flag) {
+                            editor.putLong("initialTime",System.currentTimeMillis());
+                            editor.commit();
+                            firstDrop = true;
+                        }
                         final FragmentManager fragmentManager = getFragmentManager();
                         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
@@ -148,12 +160,27 @@ public class PutPegFragment extends Fragment {
                             //text.setText("Total Drops: " + total);
 
 
-                        }
-                        else {
+                        } else {
+                            initialDropTime = pref.getLong("initialTime",initialDropTime);
+                            lastDropTime = System.currentTimeMillis();
+                            timeTaken = lastDropTime - initialDropTime;
                             editor.putBoolean("flag", false);
-                            editor.putInt("droppedPegs",0);
+                            editor.putInt("droppedPegs", 0);
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_Light_Dialog_Alert);
+                            alertDialogBuilder.setTitle("Your Time to complete the Test");
+                            alertDialogBuilder.setMessage(String.valueOf(timeTaken / 1000) + " seconds");
 
-                            fragmentManager.beginTransaction().replace(R.id.frame_layout, new RemovePegFragment()).commit();
+                            alertDialogBuilder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    fragmentManager.beginTransaction().replace(R.id.frame_layout, new RemovePegFragment()).commit();
+
+
+                                }
+                            });
+                            alertDialogBuilder.setCancelable(false);
+                            alertDialogBuilder.show().getWindow();
+
 
                         }
                     }
