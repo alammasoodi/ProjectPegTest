@@ -50,9 +50,9 @@ public class RemovePegFragment extends Fragment {
         v = inflater.inflate(R.layout.fragment_remove_peg, container, false);
         pref = getActivity().getApplication().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = pref.edit();
+        isFlag = pref.getBoolean("flag",false);
         if(isFlag)
             pegsRemoved = pref.getInt("pegsRemoved",pegsRemoved);
-
         dragButton = (Button)v. findViewById(R.id.drag_button);
         holeButton = (Button) v.findViewById(R.id.hole_button);
         arrow1 = (ImageView) v.findViewById(R.id.guide1);
@@ -80,6 +80,7 @@ public class RemovePegFragment extends Fragment {
 
             @Override
             public boolean onDrag(View v, DragEvent event) {
+
                 // TODO Auto-generated method stub
                 final int action = event.getAction();
                 switch (action) {
@@ -105,8 +106,6 @@ public class RemovePegFragment extends Fragment {
                     }
 
                     case DragEvent.ACTION_DRAG_ENDED: {
-
-                        pegsRemoved = pegsRemoved + 1;
                         final FragmentManager fragmentManager = getFragmentManager();
                         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         if (pegsRemoved < 2) {

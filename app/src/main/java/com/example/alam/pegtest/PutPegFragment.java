@@ -22,6 +22,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by alam on 9/12/17.
  */
@@ -43,11 +46,15 @@ public class PutPegFragment extends Fragment {
     Animation animFadein1,animFadein2,animFadein3;
     LinearLayout draggable_layout;
     ImageView arrow1,arrow2,arrow3;
+    //List<FingerTouch> fingers = new LinkedList();
+    float mx,my;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_put_peg, container, false);
         pref = getActivity().getApplication().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = pref.edit();
+//        fingers.add(0, null);
+//        fingers.add(1, null);
         isFlag = pref.getBoolean("flag",false);
         if(isFlag)
             droppedPegs = pref.getInt("droppedPegs",droppedPegs);
@@ -164,6 +171,73 @@ public class PutPegFragment extends Fragment {
             @Override
             public boolean onTouch(View v, MotionEvent motionEvent) {
                 int action = motionEvent.getAction();
+
+//                mx = motionEvent.getX();
+//                my = motionEvent.getY();
+//                int pointerCount = motionEvent.getPointerCount();
+//
+//                if(pointerCount > 2){
+//                    pointerCount = 2;
+//                    System.out.println("too many fingers!");
+//                } // since i want to handle only two fingers, every other finger will be ignored.
+//
+//                for (int i = 0; i < pointerCount; i++) {
+//
+//                    float x = motionEvent.getX(i);
+//                    float y = motionEvent.getY(i);
+//
+//                    int id = motionEvent.getPointerId(i);
+//                    int action = motionEvent.getActionMasked();
+//                    int actionIndex = motionEvent.getActionIndex();
+//
+//                    if (action == MotionEvent.ACTION_DOWN
+//                            || action == MotionEvent.ACTION_POINTER_DOWN) {
+//
+//                        if (    fingers.get(i) == null)
+//                            fingers.add(i, new FingerTouch(x, y, id));
+//
+//
+//                    }
+//
+//                    if (fingers.get(i).type == FingerTouch.SCREEN_FINGER) {
+//
+//                        switch (action) {
+//                            case MotionEvent.ACTION_UP:
+//                                fingers.remove(i);
+//                                Toast.makeText(getActivity(), id+" action up)", Toast.LENGTH_SHORT).show();
+//                                break;
+//                            case MotionEvent.ACTION_POINTER_UP:
+//                                fingers.remove(i);
+//                                Toast.makeText(getActivity(), id+" pointer up)", Toast.LENGTH_SHORT).show();
+//                                break;
+//                            case MotionEvent.ACTION_MOVE:
+//                                fingers.get(i).setPos(x, y);
+//                                Toast.makeText(getActivity(), id + " action_move!, x: "+fingers.get(i).x+", y: "+fingers.get(i).y, Toast.LENGTH_SHORT).show();
+//
+//                                break;
+//                            default:
+//
+//                        }
+//                    }else if (fingers.get(i).type == FingerTouch.DPAD_FINGER) {
+//                        switch (action) {
+//                            case MotionEvent.ACTION_UP:
+//                                fingers.remove(i);
+//                                System.out.println(id + " action_up! - dpad");
+//                                break;
+//                            case MotionEvent.ACTION_POINTER_UP:
+//                                fingers.remove(i);
+//                                System.out.println(id + " pointer_up! - dpad");
+//                                break;
+//                            case MotionEvent.ACTION_MOVE:
+//                                fingers.get(i).setPos(x, y);
+//                                System.out.println(id + " action_move! - dpad, x: "+fingers.get(i).x+", y: "+fingers.get(i).y);
+//                                break;
+//                            default:
+//
+//                        }
+//                   }
+//                }
+
 //                if(motionEvent.getPointerCount()==2){
 //                    Toast.makeText(PlacePegActivity.this, " Two Fingers Tapped Once. Yeeeyy :)", Toast.LENGTH_SHORT).show();
 //                    ClipData data = ClipData.newPlainText("", "");
@@ -187,7 +261,7 @@ public class PutPegFragment extends Fragment {
                 }
                 // TODO Auto-generated method stub
 
-                return false;
+                return true;
             }
         });
 
