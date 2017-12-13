@@ -1,8 +1,10 @@
 package com.example.alam.pegtest;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -36,10 +38,13 @@ public class RemovePegFragment extends Fragment {
     int pegsRemoved = 0;
     LinearLayout draggable_layout;
     SharedPreferences pref;
+    long initialDropTime = 0;
+    long lastDropTime = 0;
+    long timeTaken;
     SharedPreferences.Editor editor;
     ImageView arrow1,arrow2,arrow3;
     Animation animFadein1,animFadein2,animFadein3;
-    boolean isFlag;
+    boolean isFlag,firstDrop;
     CountDownTimer mCountDownTimer;
 
 
@@ -48,11 +53,8 @@ public class RemovePegFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_remove_peg, container, false);
-        pref = getActivity().getApplication().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        pref = getActivity().getApplication().getSharedPreferences("PegPref", 0); // 0 - for private mode
         editor = pref.edit();
-        isFlag = pref.getBoolean("flag",false);
-        if(isFlag)
-            pegsRemoved = pref.getInt("pegsRemoved",pegsRemoved);
         dragButton = (Button)v. findViewById(R.id.drag_button);
         holeButton = (Button) v.findViewById(R.id.hole_button);
         arrow1 = (ImageView) v.findViewById(R.id.guide1);
@@ -86,6 +88,10 @@ public class RemovePegFragment extends Fragment {
                 switch (action) {
 
                     case DragEvent.ACTION_DRAG_STARTED:
+                        if (!firstDrop) {
+                            initialDropTime = System.currentTimeMillis();
+                            firstDrop = true;
+                        }
                         break;
 
                     case DragEvent.ACTION_DRAG_EXITED:
@@ -97,15 +103,14 @@ public class RemovePegFragment extends Fragment {
                     case DragEvent.ACTION_DROP: {
                         success = success +1;
                         pegsRemoved = pegsRemoved + 1;
-                        editor.putInt("pegsRemoved",pegsRemoved);
-                        editor.putBoolean("flag", true);
-                        editor.commit();
                         success = success +1;
                         flag = true;
                         return (true);
                     }
 
                     case DragEvent.ACTION_DRAG_ENDED: {
+
+
                         final FragmentManager fragmentManager = getFragmentManager();
                         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         if (pegsRemoved < 2) {
@@ -119,15 +124,14 @@ public class RemovePegFragment extends Fragment {
 
                                     @Override
                                     public void onFinish() {
-                                        fragmentManager.beginTransaction().replace(R.id.frame_layout, new RemovePegFragment()).commit();
-
+                                        dragButton.setVisibility(View.VISIBLE);
                                     }
                                 };
                                 Toast.makeText(getActivity(), "success", Toast.LENGTH_SHORT).show();
                                 mCountDownTimer.start();
 
                             } else {
-                                fragmentManager.beginTransaction().replace(R.id.frame_layout, new RemovePegFragment()).commit();
+                                dragButton.setVisibility(View.VISIBLE);
 
                                 Toast.makeText(getActivity(), "try again", Toast.LENGTH_SHORT).show();
 
@@ -138,13 +142,26 @@ public class RemovePegFragment extends Fragment {
 
                         }
                         else {
-                            editor.putBoolean("flag", false);
-                            editor.putInt("pegsRemoved",0);
-                            Intent intent = new Intent(getActivity(),ResultActivity.class);
-                            startActivity(intent);
+                            lastDropTime = System.currentTimeMillis();
+                            timeTaken  = lastDropTime - initialDropTime;
+                           AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_Light_Dialog_Alert);
+                            alertDialogBuilder.setTitle("Time taken to put pegs behind the line");
+                            alertDialogBuilder.setMessage(String.valueOf(timeTaken / 1000) + " seconds");
+
+                            alertDialogBuilder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(getActivity(),ResultActivity.class);
+                                    startActivity(intent);
+
+                                }
+                            });
+                            alertDialogBuilder.setCancelable(false);
+                            alertDialogBuilder.show().getWindow();
+
+
                         }
                     }
-                    editor.commit();
                     return (true);
                     default:
                         break;

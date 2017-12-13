@@ -39,10 +39,9 @@ public class PutPegFragment extends Fragment {
     LinearLayout hole;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
-    boolean isFlag;
+    boolean firstDrag = false;
     int total,failure,success;
     TextView text;
-    boolean firstDrop = false;
     long initialDropTime = 0;
     long lastDropTime = 0;
     long timeTaken;
@@ -58,13 +57,10 @@ public class PutPegFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_put_peg, container, false);
-        pref = getActivity().getApplication().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        pref = getActivity().getApplication().getSharedPreferences("PegPref", 0); // 0 - for private mode
         editor = pref.edit();
 //        fingers.add(0, null);
 //        fingers.add(1, null);
-        isFlag = pref.getBoolean("flag",false);
-        if(isFlag)
-            droppedPegs = pref.getInt("droppedPegs",droppedPegs);
         dragButton = (Button)v. findViewById(R.id.drag_button);
         holeButton = (Button) v.findViewById(R.id.hole_button);
         arrow1 = (ImageView) v.findViewById(R.id.guide1);
@@ -105,6 +101,10 @@ public class PutPegFragment extends Fragment {
                 switch (action) {
 
                     case DragEvent.ACTION_DRAG_STARTED:
+                        if(!firstDrag) {
+                            initialDropTime = System.currentTimeMillis();
+                            firstDrag = true;
+                        }
                         break;
 
                     case DragEvent.ACTION_DRAG_EXITED:
@@ -115,20 +115,13 @@ public class PutPegFragment extends Fragment {
 
                     case DragEvent.ACTION_DROP: {
                         droppedPegs = droppedPegs + 1;
-                        editor.putInt("droppedPegs",droppedPegs);
-                        editor.putBoolean("flag", true);
-                        editor.commit();
                         success = success +1;
                         flag = true;
                         return (true);
                     }
 
                     case DragEvent.ACTION_DRAG_ENDED: {
-                        if (!flag) {
-                            editor.putLong("initialTime",System.currentTimeMillis());
-                            editor.commit();
-                            firstDrop = true;
-                        }
+
                         final FragmentManager fragmentManager = getFragmentManager();
                         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
@@ -143,15 +136,14 @@ public class PutPegFragment extends Fragment {
 
                                     @Override
                                     public void onFinish() {
-                                        fragmentManager.beginTransaction().replace(R.id.frame_layout, new PutPegFragment()).commit();
-
+                                        dragButton.setVisibility(View.VISIBLE);
                                     }
                                 };
                                 Toast.makeText(getActivity(), "success", Toast.LENGTH_SHORT).show();
                                 mCountDownTimer.start();
 
                             } else {
-                                fragmentManager.beginTransaction().replace(R.id.frame_layout, new PutPegFragment()).commit();
+                                dragButton.setVisibility(View.VISIBLE);
 
                                 Toast.makeText(getActivity(), "try again", Toast.LENGTH_SHORT).show();
 
@@ -161,13 +153,10 @@ public class PutPegFragment extends Fragment {
 
 
                         } else {
-                            initialDropTime = pref.getLong("initialTime",initialDropTime);
                             lastDropTime = System.currentTimeMillis();
                             timeTaken = lastDropTime - initialDropTime;
-                            editor.putBoolean("flag", false);
-                            editor.putInt("droppedPegs", 0);
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_Light_Dialog_Alert);
-                            alertDialogBuilder.setTitle("Your Time to complete the Test");
+                            alertDialogBuilder.setTitle("Time taken to put all pegs in the hole");
                             alertDialogBuilder.setMessage(String.valueOf(timeTaken / 1000) + " seconds");
 
                             alertDialogBuilder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
@@ -181,11 +170,11 @@ public class PutPegFragment extends Fragment {
                             alertDialogBuilder.setCancelable(false);
                             alertDialogBuilder.show().getWindow();
 
+                           // editor.putLong("initialTime",0);
 
                         }
                     }
 
-                    editor.commit();
                     return (true);
                     default:
                         break;
