@@ -1,12 +1,10 @@
 package com.example.alam.pegtest;
 
-import android.animation.AnimatorSet;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ClipData;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -24,9 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by alam on 9/12/17.
@@ -92,7 +87,7 @@ public class PutPegFragment extends Fragment {
 
         draggable_layout = (LinearLayout) v.findViewById(R.id.draggable_layout);
         draggable_layout.setOnDragListener(new View.OnDragListener() {
-            boolean flag = false;
+            boolean isSuccessfulDrop = false;
 
             @Override
             public boolean onDrag(View v, DragEvent event) {
@@ -116,7 +111,7 @@ public class PutPegFragment extends Fragment {
                     case DragEvent.ACTION_DROP: {
                         droppedPegs = droppedPegs + 1;
                         success = success +1;
-                        flag = true;
+                        isSuccessfulDrop = true;
                         return (true);
                     }
 
@@ -125,8 +120,8 @@ public class PutPegFragment extends Fragment {
                         final FragmentManager fragmentManager = getFragmentManager();
                         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-                        if (droppedPegs < 2) {
-                            if (flag) {
+                        if (droppedPegs < 3) {
+                            if (isSuccessfulDrop) {
                                 mCountDownTimer = new CountDownTimer(500, 1000) {
 
                                     @Override
@@ -148,6 +143,7 @@ public class PutPegFragment extends Fragment {
                                 Toast.makeText(getActivity(), "try again", Toast.LENGTH_SHORT).show();
 
                             }
+                            isSuccessfulDrop = false;
 
                             //text.setText("Total Drops: " + total);
 

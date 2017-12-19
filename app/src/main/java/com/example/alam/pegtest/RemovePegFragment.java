@@ -78,7 +78,7 @@ public class RemovePegFragment extends Fragment {
         //hole.setTag(Hl_TAG);
         draggable_layout = (LinearLayout) v.findViewById(R.id.draggable_layout);
         draggable_layout.setOnDragListener(new View.OnDragListener() {
-            boolean flag = false;
+            boolean isSuccessfulDrop = false;
 
             @Override
             public boolean onDrag(View v, DragEvent event) {
@@ -104,7 +104,7 @@ public class RemovePegFragment extends Fragment {
                         success = success +1;
                         pegsRemoved = pegsRemoved + 1;
                         success = success +1;
-                        flag = true;
+                        isSuccessfulDrop = true;
                         return (true);
                     }
 
@@ -114,7 +114,7 @@ public class RemovePegFragment extends Fragment {
                         final FragmentManager fragmentManager = getFragmentManager();
                         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         if (pegsRemoved < 2) {
-                            if (flag) {
+                            if (isSuccessfulDrop) {
                                 mCountDownTimer = new CountDownTimer(500, 1000) {
 
                                     @Override
@@ -136,6 +136,7 @@ public class RemovePegFragment extends Fragment {
                                 Toast.makeText(getActivity(), "try again", Toast.LENGTH_SHORT).show();
 
                             }
+                            isSuccessfulDrop = false;
 
                             //text.setText("Total Drops: " + total);
 
